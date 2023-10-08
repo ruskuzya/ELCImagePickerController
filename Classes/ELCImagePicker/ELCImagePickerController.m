@@ -30,6 +30,8 @@
         self.returnsOriginalImage = YES;
         [albumPicker setParent:self];
         self.mediaTypes = @[(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie];
+//        UIBarButtonItem *backButton = [UIBA];
+        [self.navigationItem.backBarButtonItem setTitle:@"Назад"];
     }
     return self;
 }
@@ -43,6 +45,13 @@
         self.returnsImage = YES;
     }
     return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Назад" style:UIBarButtonItemStylePlain target:nil action:nil];
+    [self.navigationItem setBackBarButtonItem:backButton];
 }
 
 - (ELCAlbumPickerController *)albumPicker
