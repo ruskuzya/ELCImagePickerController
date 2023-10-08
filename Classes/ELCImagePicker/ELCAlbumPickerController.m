@@ -28,7 +28,7 @@
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 	
-	[self.navigationItem setTitle:NSLocalizedString(@"Loading...", nil)];
+	[self.navigationItem setTitle:NSLocalizedString(@"Загрузка...", nil)];
 
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self.parent action:@selector(cancelImagePicker)];
 	[self.navigationItem setRightBarButtonItem:cancelButton];
@@ -70,12 +70,12 @@
             void (^assetGroupEnumberatorFailure)(NSError *) = ^(NSError *error) {
               
                 if ([ALAssetsLibrary authorizationStatus] == ALAuthorizationStatusDenied) {
-                    NSString *errorMessage = NSLocalizedString(@"This app does not have access to your photos or videos. You can enable access in Privacy Settings.", nil);
-                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Access Denied", nil) message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles:nil] show];
+                    NSString *errorMessage = NSLocalizedString(@"У этого приложения нет доступа к Вашим фото. Вы можете дать доступ в Настройках.", nil);
+                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Нет доступа", nil) message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"ОК", nil) otherButtonTitles:nil] show];
                   
                 } else {
-                    NSString *errorMessage = [NSString stringWithFormat:@"Album Error: %@ - %@", [error localizedDescription], [error localizedRecoverySuggestion]];
-                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles:nil] show];
+                    NSString *errorMessage = [NSString stringWithFormat:@"Ошибка альбома: %@ - %@", [error localizedDescription], [error localizedRecoverySuggestion]];
+                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Ошибка", nil) message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"ОК", nil) otherButtonTitles:nil] show];
                 }
 
                 [self.navigationItem setTitle:nil];
@@ -106,7 +106,7 @@
 - (void)reloadTableView
 {
 	[self.tableView reloadData];
-	[self.navigationItem setTitle:NSLocalizedString(@"Select an Album", nil)];
+	[self.navigationItem setTitle:NSLocalizedString(@"Выберите альбом", nil)];
 }
 
 - (BOOL)shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount

@@ -50,7 +50,7 @@
         }
     } failureBlock:^(NSError *error) {
         self.chosenImages = nil;
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[NSString stringWithFormat:@"Album Error: %@ - %@", [error localizedDescription], [error localizedRecoverySuggestion]] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Ошибка" message:[NSString stringWithFormat:@"Ошибка альбома: %@ - %@", [error localizedDescription], [error localizedRecoverySuggestion]] delegate:nil cancelButtonTitle:@"ОК" otherButtonTitles:nil];
         [alert show];
         
         NSLog(@"A problem occured %@", [error description]);

@@ -45,7 +45,7 @@
     } else {
         UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
         [self.navigationItem setRightBarButtonItem:doneButtonItem];
-        [self.navigationItem setTitle:NSLocalizedString(@"Loading...", nil)];
+        [self.navigationItem setTitle:NSLocalizedString(@"Ошибка...", nil)];
     }
 
 	[self performSelectorInBackground:@selector(preparePhotos) withObject:nil];
@@ -119,7 +119,7 @@
                                                       animated:NO];
             }
             
-            [self.navigationItem setTitle:self.singleSelection ? NSLocalizedString(@"Pick Photo", nil) : NSLocalizedString(@"Pick Photos", nil)];
+            [self.navigationItem setTitle:self.singleSelection ? NSLocalizedString(@"Выберите фото", nil) : NSLocalizedString(@"Выберите фото", nil)];
         });
     }
 }
