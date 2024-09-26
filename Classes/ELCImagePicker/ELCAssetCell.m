@@ -83,7 +83,9 @@
 {
     CGPoint point = [tapRecognizer locationInView:self];
     int c = (int32_t)self.rowAssets.count;
-    CGFloat totalWidth = c * 75 + (c - 1) * 4;
+    CGFloat imageWidth = (self.bounds.size.width - 20.0) / 4;
+    
+    CGFloat totalWidth = c * imageWidth + (c - 1) * 4;
     CGFloat startX;
     
     if (self.alignmentLeft) {
@@ -92,7 +94,7 @@
         startX = (self.bounds.size.width - totalWidth) / 2;
     }
     
-	CGRect frame = CGRectMake(startX, 2, 75, 75);
+	CGRect frame = CGRectMake(startX, 2, imageWidth, imageWidth);
 	
 	for (int i = 0; i < [_rowAssets count]; ++i) {
         if (CGRectContainsPoint(frame, point)) {
@@ -119,7 +121,8 @@
 - (void)layoutSubviews
 {
     int c = (int32_t)self.rowAssets.count;
-    CGFloat totalWidth = c * 75 + (c - 1) * 4;
+    CGFloat imageWidth = (self.bounds.size.width - 20.0) / 4;
+    CGFloat totalWidth = c * imageWidth + (c - 1) * 4;
     CGFloat startX;
     
     if (self.alignmentLeft) {
@@ -128,7 +131,7 @@
         startX = (self.bounds.size.width - totalWidth) / 2;
     }
     
-	CGRect frame = CGRectMake(startX, 2, 75, 75);
+	CGRect frame = CGRectMake(startX, 2, imageWidth, imageWidth);
 	
 	for (int i = 0; i < [_rowAssets count]; ++i) {
 		UIImageView *imageView = [_imageViewArray objectAtIndex:i];
