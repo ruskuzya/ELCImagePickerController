@@ -28,6 +28,14 @@
 {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self.albums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAny options:nil];
+            
+            [self reloadTableView];
+        }];
+    }];
 	
 	[self.navigationItem setTitle:NSLocalizedString(@"Загрузка...", nil)];
     
