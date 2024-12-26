@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.source = {:git => 'https://github.com/elc/ELCImagePickerController.git',
     			:tag => '0.2.0'
     		   }
-    s.platform = :ios, '12.0'
+    s.platform = :ios, '11.0'
     s.resources = 'Classes/**/*.{xib,png}'
     s.source_files = 'Classes/ELCImagePicker/*.{h,m}'
     s.framework = 'Foundation', 'UIKit', 'Photos', 'CoreLocation'
