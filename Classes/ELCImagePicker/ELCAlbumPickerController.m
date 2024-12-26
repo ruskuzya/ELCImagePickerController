@@ -158,8 +158,11 @@
 }
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
-    _albums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
-    [self reloadTableView];
+    self.albums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAny options:nil];
+    
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [self reloadTableView];
+    }];
 }
 
 @end

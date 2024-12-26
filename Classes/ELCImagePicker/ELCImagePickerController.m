@@ -140,44 +140,6 @@
                 }];
             }
         }];
-//        [PHImageManager.defaultManager requestImageForAsset:asset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-//            elcasset.image = result;
-//            elcasset.imageDownloaded = YES;
-//            
-//            if(elcasset.image != nil) {
-//                [workingDictionary setObject:elcasset.image forKey:UIImagePickerControllerOriginalImage];
-//                [returnArray addObject:workingDictionary];
-//            }
-//        }];
-
-        //This method returns nil for assets from a shared photo stream that are not yet available locally. If the asset becomes available in the future, an ALAssetsLibraryChangedNotification notification is posted.
-//        ALAssetRepresentation *assetRep = [asset defaultRepresentation];
-
-//        [[PHImageManager defaultManager] ima]
-        
-//        if(assetRep != nil) {
-//            if (_returnsImage) {
-//                CGImageRef imgRef = nil;
-//                //defaultRepresentation returns image as it appears in photo picker, rotated and sized,
-//                //so use UIImageOrientationUp when creating our image below.
-//                UIImageOrientation orientation = UIImageOrientationUp;
-//            
-//                if (_returnsOriginalImage) {
-//                    imgRef = [assetRep fullResolutionImage];
-//                    orientation = [assetRep orientation];
-//                } else {
-//                    imgRef = [assetRep fullScreenImage];
-//                }
-//                UIImage *img = [UIImage imageWithCGImage:imgRef
-//                                                   scale:1.0f
-//                                             orientation:orientation];
-//                [workingDictionary setObject:img forKey:UIImagePickerControllerOriginalImage];
-//            }
-//
-//            [workingDictionary setObject:[[asset valueForProperty:ALAssetPropertyURLs] valueForKey:[[[asset valueForProperty:ALAssetPropertyURLs] allKeys] objectAtIndex:0]] forKey:UIImagePickerControllerReferenceURL];
-//            
-//            [returnArray addObject:workingDictionary];
-//        }
 	}
 }
 
