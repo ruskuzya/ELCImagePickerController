@@ -14,6 +14,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import "ELCConsole.h"
+#import <Photos/Photos.h>
 
 @implementation ELCImagePickerController
 
@@ -80,13 +81,11 @@
 {
     BOOL shouldSelect = previousCount < self.maximumImagesCount;
     if (!shouldSelect) {
-        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Не более %d фото!", nil), self.maximumImagesCount];
-        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Вы можете выбрать не более %d фото.", nil), self.maximumImagesCount];
-        [[[UIAlertView alloc] initWithTitle:title
-                                    message:message
-                                   delegate:nil
-                          cancelButtonTitle:nil
-                          otherButtonTitles:NSLocalizedString(@"Хорошо", nil), nil] show];
+        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Не более %ld фото!", nil), (long)self.maximumImagesCount];
+        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Вы можете выбрать не более %ld фото.", nil), (long)self.maximumImagesCount];
+        UIAlertController *controller = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertActionStyleDefault];
+        [controller addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Хорошо", nil) style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:controller animated:YES completion:nil];
     }
     return shouldSelect;
 }
@@ -101,53 +100,85 @@
 	NSMutableArray *returnArray = [[NSMutableArray alloc] init];
 	
 	for(ELCAsset *elcasset in assets) {
-        ALAsset *asset = elcasset.asset;
-		id obj = [asset valueForProperty:ALAssetPropertyType];
-		if (!obj) {
-			continue;
-		}
-		NSMutableDictionary *workingDictionary = [[NSMutableDictionary alloc] init];
-		
-		CLLocation* wgs84Location = [asset valueForProperty:ALAssetPropertyLocation];
-		if (wgs84Location) {
-			[workingDictionary setObject:wgs84Location forKey:ALAssetPropertyLocation];
-		}
+        PHAsset *asset = elcasset.asset;
         
-        [workingDictionary setObject:obj forKey:UIImagePickerControllerMediaType];
+		NSMutableDictionary *workingDictionary = [[NSMutableDictionary alloc] init];
+        
+        [workingDictionary setObject:@(asset.mediaType) forKey:UIImagePickerControllerMediaType];
+        
+        PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+        if (@available(iOS 17, *)) {
+            options.allowSecondaryDegradedImage = NO;
+        } else {
+            // Fallback on earlier versions
+        }
+        
+        [PHImageManager.defaultManager requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+            UIImage *result = [UIImage imageWithData:imageData];
+            elcasset.image = result;
+            elcasset.imageDownloaded = YES;
+            
+            if(elcasset.image != nil) {
+                [workingDictionary setObject:elcasset.image forKey:UIImagePickerControllerOriginalImage];
+                [returnArray addObject:workingDictionary];
+            }
+            
+            BOOL allImages = YES;
+            for(ELCAsset *asset in assets) {
+                if(!asset.imageDownloaded) {
+                    allImages = NO;
+                }
+            }
+            
+            if(allImages) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    if (_imagePickerDelegate != nil && [_imagePickerDelegate respondsToSelector:@selector(elcImagePickerController:didFinishPickingMediaWithInfo:)]) {
+                        [_imagePickerDelegate performSelector:@selector(elcImagePickerController:didFinishPickingMediaWithInfo:) withObject:self withObject:returnArray];
+                    } else {
+                        [self popToRootViewControllerAnimated:NO];
+                    }
+                }];
+            }
+        }];
+//        [PHImageManager.defaultManager requestImageForAsset:asset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+//            elcasset.image = result;
+//            elcasset.imageDownloaded = YES;
+//            
+//            if(elcasset.image != nil) {
+//                [workingDictionary setObject:elcasset.image forKey:UIImagePickerControllerOriginalImage];
+//                [returnArray addObject:workingDictionary];
+//            }
+//        }];
 
         //This method returns nil for assets from a shared photo stream that are not yet available locally. If the asset becomes available in the future, an ALAssetsLibraryChangedNotification notification is posted.
-        ALAssetRepresentation *assetRep = [asset defaultRepresentation];
+//        ALAssetRepresentation *assetRep = [asset defaultRepresentation];
 
-        if(assetRep != nil) {
-            if (_returnsImage) {
-                CGImageRef imgRef = nil;
-                //defaultRepresentation returns image as it appears in photo picker, rotated and sized,
-                //so use UIImageOrientationUp when creating our image below.
-                UIImageOrientation orientation = UIImageOrientationUp;
-            
-                if (_returnsOriginalImage) {
-                    imgRef = [assetRep fullResolutionImage];
-                    orientation = [assetRep orientation];
-                } else {
-                    imgRef = [assetRep fullScreenImage];
-                }
-                UIImage *img = [UIImage imageWithCGImage:imgRef
-                                                   scale:1.0f
-                                             orientation:orientation];
-                [workingDictionary setObject:img forKey:UIImagePickerControllerOriginalImage];
-            }
-
-            [workingDictionary setObject:[[asset valueForProperty:ALAssetPropertyURLs] valueForKey:[[[asset valueForProperty:ALAssetPropertyURLs] allKeys] objectAtIndex:0]] forKey:UIImagePickerControllerReferenceURL];
-            
-            [returnArray addObject:workingDictionary];
-        }
-		
-	}    
-	if (_imagePickerDelegate != nil && [_imagePickerDelegate respondsToSelector:@selector(elcImagePickerController:didFinishPickingMediaWithInfo:)]) {
-		[_imagePickerDelegate performSelector:@selector(elcImagePickerController:didFinishPickingMediaWithInfo:) withObject:self withObject:returnArray];
-	} else {
-        [self popToRootViewControllerAnimated:NO];
-    }
+//        [[PHImageManager defaultManager] ima]
+        
+//        if(assetRep != nil) {
+//            if (_returnsImage) {
+//                CGImageRef imgRef = nil;
+//                //defaultRepresentation returns image as it appears in photo picker, rotated and sized,
+//                //so use UIImageOrientationUp when creating our image below.
+//                UIImageOrientation orientation = UIImageOrientationUp;
+//            
+//                if (_returnsOriginalImage) {
+//                    imgRef = [assetRep fullResolutionImage];
+//                    orientation = [assetRep orientation];
+//                } else {
+//                    imgRef = [assetRep fullScreenImage];
+//                }
+//                UIImage *img = [UIImage imageWithCGImage:imgRef
+//                                                   scale:1.0f
+//                                             orientation:orientation];
+//                [workingDictionary setObject:img forKey:UIImagePickerControllerOriginalImage];
+//            }
+//
+//            [workingDictionary setObject:[[asset valueForProperty:ALAssetPropertyURLs] valueForKey:[[[asset valueForProperty:ALAssetPropertyURLs] allKeys] objectAtIndex:0]] forKey:UIImagePickerControllerReferenceURL];
+//            
+//            [returnArray addObject:workingDictionary];
+//        }
+	}
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation

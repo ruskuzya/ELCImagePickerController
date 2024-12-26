@@ -74,8 +74,8 @@
 	tablePicker.parent = elcPicker;
     
     // Move me
-    tablePicker.assetGroup = group;
-    [tablePicker.assetGroup setAssetsFilter:[ALAssetsFilter allAssets]];
+//    tablePicker.assetGroup = group;
+//    [tablePicker.assetGroup setAssetsFilter:[ALAssetsFilter allAssets]];
     
     [self presentViewController:elcPicker animated:YES completion:nil];
 }
@@ -104,7 +104,7 @@
     
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:[info count]];
 	for (NSDictionary *dict in info) {
-        if ([dict objectForKey:UIImagePickerControllerMediaType] == ALAssetTypePhoto){
+        if ([dict objectForKey:UIImagePickerControllerMediaType] == @(PHAssetMediaTypeImage)){
             if ([dict objectForKey:UIImagePickerControllerOriginalImage]){
                 UIImage* image=[dict objectForKey:UIImagePickerControllerOriginalImage];
                 [images addObject:image];

@@ -53,7 +53,7 @@
 	[self performSelectorInBackground:@selector(preparePhotos) withObject:nil];
     
     // Register for notifications when the photo library has changed
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preparePhotos) name:ALAssetsLibraryChangedNotification object:nil];
+    [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -66,7 +66,8 @@
 {
     [super viewWillDisappear:animated];
     [[ELCConsole mainConsole] removeAllIndex];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ALAssetsLibraryChangedNotification object:nil];
+    
+    [PHPhotoLibrary.sharedPhotoLibrary unregisterChangeObserver:self];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
@@ -86,13 +87,13 @@
     @autoreleasepool {
         
         [self.elcAssets removeAllObjects];
-        [self.assetGroup enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-            
-            if (result == nil) {
+        PHFetchResult<PHAsset *> *assets = [PHAsset fetchAssetsInAssetCollection:_collection options:nil];
+        [assets enumerateObjectsUsingBlock:^(PHAsset * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (obj == nil) {
                 return;
             }
             
-            ELCAsset *elcAsset = [[ELCAsset alloc] initWithAsset:result];
+            ELCAsset *elcAsset = [[ELCAsset alloc] initWithAsset:obj];
             [elcAsset setParent:self];
             
             BOOL isAssetFiltered = NO;
@@ -105,8 +106,7 @@
             if (!isAssetFiltered) {
                 [self.elcAssets addObject:elcAsset];
             }
-
-         }];
+        }];
 
         dispatch_sync(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
@@ -281,5 +281,8 @@
     return count;
 }
 
+- (void)photoLibraryDidChange:(PHChange *)changeInstance {
+    [self preparePhotos];
+}
 
 @end

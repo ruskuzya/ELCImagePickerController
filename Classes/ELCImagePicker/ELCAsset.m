@@ -16,12 +16,13 @@
     return [NSString stringWithFormat:@"ELCAsset index:%d",self.index];
 }
 
-- (id)initWithAsset:(ALAsset*)asset
+- (id)initWithAsset:(PHAsset *)asset
 {
 	self = [super init];
 	if (self) {
 		self.asset = asset;
         _selected = NO;
+        _imageDownloaded = NO;
     }
 	return self;	
 }

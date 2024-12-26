@@ -13,7 +13,7 @@
 @interface ELCAssetCell ()
 
 @property (nonatomic, strong) NSArray *rowAssets;
-@property (nonatomic, strong) NSMutableArray *imageViewArray;
+@property (nonatomic, strong) NSMutableArray<UIImageView *> *imageViewArray;
 @property (nonatomic, strong) NSMutableArray *overlayViewArray;
 
 @end
@@ -57,9 +57,18 @@
 
         if (i < [_imageViewArray count]) {
             UIImageView *imageView = [_imageViewArray objectAtIndex:i];
-            imageView.image = [UIImage imageWithCGImage:asset.asset.thumbnail];
+            [[PHImageManager defaultManager] requestImageForAsset:asset.asset targetSize:CGSizeMake(100, 100) contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    [imageView setImage:result];
+                }];
+            }];
         } else {
-            UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithCGImage:asset.asset.thumbnail]];
+            UIImageView *imageView = [[UIImageView alloc] init];//WithImage:[UIImage imageWithCGImage:asset.asset.thumbnail]];
+            [[PHImageManager defaultManager] requestImageForAsset:asset.asset targetSize:CGSizeMake(100, 100) contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    [imageView setImage:result];
+                }];
+            }];
             [_imageViewArray addObject:imageView];
         }
         

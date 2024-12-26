@@ -6,11 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <AssetsLibrary/AssetsLibrary.h>
+#import <Photos/Photos.h>
 #import "ELCAssetSelectionDelegate.h"
 #import "ELCAssetPickerFilterDelegate.h"
 
-@interface ELCAlbumPickerController : UITableViewController <ELCAssetSelectionDelegate>
+@interface ELCAlbumPickerController : UITableViewController <ELCAssetSelectionDelegate, PHPhotoLibraryChangeObserver>
 
 @property (nonatomic, weak) id<ELCAssetSelectionDelegate> parent;
 @property (nonatomic, strong) NSMutableArray *assetGroups;
